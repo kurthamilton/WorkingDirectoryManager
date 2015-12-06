@@ -1,0 +1,5 @@
+packages/
+WorkingDirectoryManager/obj/
+WorkingDirectoryManager/bin/
+*.user
+*.suo
