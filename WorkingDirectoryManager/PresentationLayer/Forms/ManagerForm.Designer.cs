@@ -1,4 +1,4 @@
-﻿namespace WorkingDirectoryManager.Forms
+﻿namespace WorkingDirectoryManager.PresentationLayer.Forms
 {
     partial class ManagerForm
     {

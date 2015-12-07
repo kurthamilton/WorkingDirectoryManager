@@ -1,37 +1,42 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
-using WorkingDirectoryManager.Forms;
+using WorkingDirectoryManager.Interfaces.ServiceLayer;
+using WorkingDirectoryManager.PresentationLayer;
+using WorkingDirectoryManager.PresentationLayer.Forms;
+using WorkingDirectoryManager.ServiceLayer.Svn;
 
 namespace WorkingDirectoryManager
 {
-    static class Program
+    public static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        public static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             RunApplication();
         }
 
-        static void RunApplication()
+        private static void RunApplication()
         {
-            using (var managerForm = GetManagerForm())
+            // TODO: resolve
+            IWorkingDirectoryService workingDirectoryService = new SvnWorkingDirectoryService(new AuthForm());
+
+            using (var managerForm = GetManagerForm(workingDirectoryService))
             {
-                using (var trayIcon = GetTrayIcon(managerForm))
+                using (GetTrayIcon(workingDirectoryService, managerForm))
                 {
                     Application.Run();
                 }
             }
         }
 
-        static ManagerForm GetManagerForm()
+        private static Form GetManagerForm(IWorkingDirectoryService workingDirectoryService)
         {
-            var managerForm = new ManagerForm { ShowInTaskbar = false, Visible = false };
+            var managerForm = new ManagerForm(workingDirectoryService) { ShowInTaskbar = false, Visible = false };
 
             managerForm.FormClosing += (sender, e) =>
             {
@@ -45,27 +50,9 @@ namespace WorkingDirectoryManager
             return managerForm;
         }
 
-        static NotifyIcon GetTrayIcon(ManagerForm managerForm)
+        private static TrayIcon GetTrayIcon(IWorkingDirectoryService workingDirectoryService, Form managerForm)
         {
-            var trayIcon = new NotifyIcon
-            {
-                ContextMenu = GetTrayIconContextMenu(managerForm),
-                Icon = new Icon(SystemIcons.Application, new Size(40, 40)),
-                Text = "Working Directory Manager",
-                Visible = true
-            };
-
-            trayIcon.DoubleClick += (sender, e) => managerForm.Show();
-
-            return trayIcon;
-        }
-
-        static ContextMenu GetTrayIconContextMenu(ManagerForm managerForm)
-        {
-            var contextMenu = new ContextMenu();
-            contextMenu.MenuItems.Add("Show", (sender, e) => managerForm.Show());
-            contextMenu.MenuItems.Add("Exit", (sender, e) => Application.Exit());
-            return contextMenu;
+            return new TrayIcon(workingDirectoryService, managerForm);
         }
     }
 }

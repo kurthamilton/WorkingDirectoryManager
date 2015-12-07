@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WorkingDirectoryManager.Forms
+namespace WorkingDirectoryManager.PresentationLayer.Forms
 {
-    public partial class ManagerForm : Form
+    public partial class AuthForm : Form
     {
-        public ManagerForm()
+        public AuthForm()
         {
             InitializeComponent();
         }
